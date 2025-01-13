@@ -1,0 +1,11 @@
+#!/bin/bash
+echo 'post-receive: Triggered.'
+cd /opt/live/project-congo
+echo 'post-receive: git check out…'
+git --git-dir=/opt/project-congo.git --work-tree=/opt/live/project-congo checkout master -f
+echo 'post-receive: npm install…'
+npm install \
+&& echo 'post-receive: → done.' \
+&& (pm2 delete 'project-congo' || true) \
+&& pm2 start npm --name 'project-congo' -- run start:prod \
+&& echo 'post-receive: app started successfully with pm2.'
